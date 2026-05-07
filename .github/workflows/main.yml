@@ -1,17 +1,19 @@
-name: Proxy Server
+name: DNS Tunnel
 on: [push]
 jobs:
-  proxy:
+  dns-tunnel:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Runner is active"
       - run: |
-          sudo apt-get update -y
-          sudo apt-get install -y dante-server
-          sudo bash -c 'echo "socksmethod: none" > /etc/danted.conf'
-          sudo bash -c 'echo "internal: 0.0.0.0 port = 1080" >> /etc/danted.conf'
-          sudo bash -c 'echo "external: eth0" >> /etc/danted.conf'
-          sudo service danted start
-          echo "SOCKS5 proxy running on port 1080"
+          # نصب dnstt
+          curl -L -o dnstt-server https://github.com/radkesvat/DNSTT/releases/latest/download/dnstt-server-linux-amd64
+          chmod +x dnstt-server
+          
+          # اجرای dnstt روی پورت 53
+          ./dnstt-server -udp :53 -pubkey 0000000000000000000000000000000000000000000000000000000000000000 -privkey 0000000000000000000000000000000000000000000000000000000000000000 &
+          sleep 2
+          
+          echo "DNSTT running on port 53"
           echo "PROXY_IP=$(curl -s ifconfig.me)"
           sleep 3600
