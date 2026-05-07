@@ -34,14 +34,12 @@ jobs:
           ./xray run -c config.json &
           sleep 3
           
-          # نصب و اجرای ngrok برای تونل
-          curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
-          echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
-          sudo apt-get update -y && sudo apt-get install ngrok -y
-          
-          echo "Starting ngrok..."
-          ngrok tcp 1080 --log=stdout &
-          sleep 8
-          TUNNEL_URL=$(curl -s localhost:4040/api/tunnels | grep -o '"public_url":"[^"]*' | grep -o 'tcp://[^"]*')
-          echo "::notice::NGROK URL: $TUNNEL_URL"
+          # اجرای پروکسی Socks5 مستقیم و نمایش IP
+          sudo apt-get update -y
+          sudo apt-get install -y dante-server
+          sudo bash -c 'echo "socksmethod: none" > /etc/danted.conf'
+          sudo bash -c 'echo "internal: 0.0.0.0 port = 1080" >> /etc/danted.conf'
+          sudo bash -c 'echo "external: eth0" >> /etc/danted.conf'
+          sudo service danted start
+          echo "PROXY_IP=$(curl -s ifconfig.me)"
           sleep 3600
