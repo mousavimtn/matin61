@@ -1,0 +1,8 @@
+name: Relay Tunnel
+on: [push]
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Runner is active"
+      - run: sleep 3600
