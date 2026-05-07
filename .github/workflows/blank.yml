@@ -13,5 +13,7 @@ jobs:
           echo "external: eth0" | sudo tee -a /etc/danted.conf
           sudo service danted start
           echo "SOCKS5 proxy running on port 1080"
-          curl ifconfig.me
+          echo "MY_IP=$(curl -s ifconfig.me)"
+          echo "::warning:: PROXY IP: $(curl -s ifconfig.me)"
+          curl -s ifconfig.me > /tmp/ip.txt && cat /tmp/ip.txt
           sleep 3600
