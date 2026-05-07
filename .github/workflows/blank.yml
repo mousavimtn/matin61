@@ -5,4 +5,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Runner is active"
-      - run: sleep 3600 
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y dante-server
+          echo "socksmethod: none" | sudo tee /etc/danted.conf
+          echo "internal: 0.0.0.0 port = 1080" | sudo tee -a /etc/danted.conf
+          echo "external: eth0" | sudo tee -a /etc/danted.conf
+          sudo service danted start
+          echo "SOCKS5 proxy running on port 1080"
+          curl ifconfig.me
+          sleep 3600
